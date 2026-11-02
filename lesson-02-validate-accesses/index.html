@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validate Access Handout</title>
+<!--
+  Student handout for the "Validate access" lesson: the sites to check, the
+  links to click, and the GitLab group layout.
+
+  For whoever maintains this next:
+  - Screenshots are in lessons/, named lesson-02-item-02-<what it shows>.png. This page shows the Databricks
+    workspace, GitLab groups and Pegasus group images. The token notice image is
+    kept but isn't shown here.
+  - This page is the lesson plan and the checklist. Training objectives (1) and the
+    knowledge check (6) are rows that open their own files in lessons/, full screen,
+    like lesson 1's plan. The validations (2-5) are on this page.
+  - It's also sent with the welcome letter. A copy sent on its own needs rows 1 and 6
+    removed and its images built in.
+  - "Done" ticks on rows 1 and 6 are kept in this browser's localStorage only.
+  - Every link shows its full address too, so a printed copy is still usable.
+  - Print with File > Print (Cmd/Ctrl+P); print styles keep each step together.
+  - This page is lesson 2 in ../course.js, so it carries the course bar
+    (All lessons / Previous / Next). The bar is hidden when printing.
+  - Clicking a screenshot shows it full screen; Esc returns to the handout.
+-->
+<style>
+  :root {
+    --paper: #f3eee2; --card: rgba(255, 255, 255, .5); --grid: rgba(60, 70, 90, .08);
+    --ink: #2b2b2b; --ink-2: #4a4a4a; --ink-3: #6b6b6b;
+    --red: #e2432a; --blue: #1f4fbf; --gold: #c9971f;
+    --display: "Avenir Next Condensed", "Bahnschrift", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  /* The paper look is the design, so it stays the same in dark mode (like the slide). */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: var(--ink); background-color: var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    font: 500 17px/1.45 var(--display); font-stretch: condensed; -webkit-font-smoothing: antialiased;
+  }
+  .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--blue); margin: 0 0 6px; }
+  h1 { margin: 0; font-size: 56px; line-height: 1; font-weight: 800; text-transform: uppercase; letter-spacing: -.01em; }
+  h1 .accent { color: var(--red); }
+  /* Blueprint corner markers, like the slide's boxes. --c sets the box color. */
+  .marked { position: relative; border: 2px solid var(--c, var(--blue)); background: var(--card); }
+  .marked::before, .marked::after { content: ""; position: absolute; width: 10px; height: 10px; background: var(--c, var(--blue)); }
+  .marked::before { left: -6px; top: -6px; }
+  .marked::after { right: -6px; bottom: -6px; }
+
+  .page { max-width: 860px; margin: 0 auto; padding: 56px 32px 72px; }
+  .intro { margin: 14px 0 0; font-size: 20px; line-height: 1.35; color: var(--ink-2); max-width: 720px; }
+  h2 { font-size: 30px; line-height: 1.02; margin: 0 0 6px; font-weight: 800; text-transform: uppercase; }
+  h3 { font-size: 20px; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+  p { margin: 6px 0; }
+
+  .step { margin-top: 36px; padding: 26px 28px 24px; break-inside: avoid; }
+  .step:nth-of-type(4n+1) { --c: var(--blue); }
+  .step:nth-of-type(4n+2) { --c: var(--red); }
+  .step:nth-of-type(4n+3) { --c: var(--gold); }
+  .step:nth-of-type(4n+4) { --c: var(--blue); }
+  .step-head { display: grid; grid-template-columns: 48px 1fr; gap: 18px; align-items: start; }
+  .num {
+    width: 48px; height: 48px; display: grid; place-items: center; border: 2px solid var(--c);
+    color: var(--c); font-size: 26px; font-weight: 800; background: var(--paper);
+  }
+  .step-body { grid-column: 2; min-width: 0; }
+
+  a.link {
+    display: inline-flex; flex-direction: column; gap: 2px; margin: 10px 10px 4px 0; padding: 10px 16px;
+    border: 2px solid var(--c); background: var(--paper); color: var(--c); text-decoration: none;
+    font-size: 19px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; max-width: 100%;
+  }
+  a.link:hover { background: #fff; }
+  a.link .url { font: 500 13px/1.4 var(--mono); text-transform: none; letter-spacing: 0; color: var(--ink-2); word-break: break-all; }
+
+  figure { margin: 14px 0 0; }
+  figure img { display: block; width: 100%; height: auto; border: 2px solid var(--ink); background: #fff; }
+  figcaption { font-size: 14px; color: var(--ink-3); margin-top: 6px; letter-spacing: .02em; }
+
+  .check { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0; font-size: 18px; }
+  .check input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--c); flex: none; }
+
+  .groups { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px; align-items: start; }
+  .group { padding: 14px 16px; break-inside: avoid; }
+  .group:nth-child(1) { --c: var(--blue); }
+  .group:nth-child(2) { --c: var(--red); }
+  .group:nth-child(3) { --c: var(--gold); }
+  .group:nth-child(4) { --c: var(--blue); }
+  .group .row { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+  .group a { color: var(--c); text-decoration: none; }
+  .group a:hover { text-decoration: underline; }
+  .group .url { font: 12px/1.4 var(--mono); color: var(--ink-3); word-break: break-all; }
+  .group p { color: var(--ink-2); font-size: 16px; margin: 6px 0 0; }
+  .tree {
+    font: 14px/1.6 var(--mono); color: var(--ink); background: var(--paper); border: 2px dashed var(--ink-3);
+    padding: 12px 16px; margin: 14px 0 0; white-space: pre; overflow-x: auto;
+  }
+  .note { margin-top: 16px; padding: 12px 16px; border-left: 6px solid var(--red); background: var(--card); font-size: 17px; }
+  code { font: 14px var(--mono); background: #fff; padding: 1px 5px; border: 1px solid rgba(0, 0, 0, .12); }
+
+  /* Placeholders: content still to be added before class. */
+  .ph { display: inline-block; padding: 1px 8px; border: 2px dashed #b8860b; background: #fff6d6; color: #6b4e00; font-weight: 700; }
+  .ph::before { content: "TO ADD: "; font-weight: 800; letter-spacing: .06em; }
+  .ph.confirm::before { content: "TO CONFIRM: "; }
+  .ph-block { margin-top: 14px; padding: 12px 14px; border: 2px dashed #b8860b; background: #fff6d6; color: #4a3800; }
+  .ph-block .ph-tag { display: inline-block; margin-bottom: 4px; font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #8a6300; }
+
+  /* Course bar (from ../course.js), same as the lesson plans. */
+  .course-nav {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    margin: 0 0 32px; padding-bottom: 14px; border-bottom: 2px solid var(--ink); font-size: 15px;
+  }
+  .course-nav:empty { display: none; }
+  .course-nav a { text-decoration: none; color: var(--ink); }
+  .course-nav > div:first-child a { font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .course-nav .where { color: var(--ink-3); }
+  .course-nav .steps { display: flex; gap: 8px; }
+  .course-nav .steps a, .course-nav .steps span {
+    display: inline-flex; align-items: center; height: 34px; padding: 0 12px; white-space: nowrap;
+    border: 2px solid var(--ink); background: var(--paper); font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+  }
+  .course-nav .steps a:hover { background: #fff; }
+  .course-nav .steps a.next { background: var(--ink); color: var(--paper); }
+  .course-nav .steps a.next:hover { background: var(--red); border-color: var(--red); color: #fff; }
+  .course-nav .steps span { border-color: rgba(43, 43, 43, .34); color: var(--ink-3); }
+
+  /* Screenshots open full screen on click. */
+  figure img { cursor: zoom-in; }
+  figure img:fullscreen { object-fit: contain; background: #000; border: 0; cursor: zoom-out; width: 100%; height: 100%; }
+  figure img:-webkit-full-screen { object-fit: contain; background: #000; border: 0; width: 100%; height: 100%; }
+
+  .print-btn {
+    position: fixed; right: 20px; bottom: 20px; cursor: pointer; height: 40px; padding: 0 18px; border: 2px solid var(--ink);
+    background: var(--ink); color: var(--paper); font: 800 15px var(--display); letter-spacing: .08em; text-transform: uppercase;
+  }
+  .print-btn:hover { background: var(--red); border-color: var(--red); }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 16px 80px; }
+    h1 { font-size: 40px; }
+    .step { padding: 20px 16px; }
+    .step-head { grid-template-columns: 1fr; gap: 10px; }
+    .step-body { grid-column: 1; }
+    .groups { grid-template-columns: 1fr; }
+  }
+
+  /* Activity rows that open their own file, laid out like lesson 1's plan. */
+  .activity-row { grid-column: 2; min-width: 0; display: grid; grid-template-columns: 160px minmax(0, 1fr) auto; gap: 18px; align-items: start; }
+  .activity-thumb { display: block; width: 160px; aspect-ratio: 16 / 9; overflow: hidden; background: #fff; border: 2px solid var(--ink); }
+  .activity-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .activity-title { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 20px; font-weight: 800; }
+  .activity-title a { color: var(--ink); text-decoration: none; }
+  .activity-title a:hover { color: var(--c); }
+  .activity-kind { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; background: var(--paper); border: 1px solid var(--c); color: var(--c); }
+  .activity-file { font: 12px/1.4 var(--mono); color: var(--ink-2); overflow-wrap: anywhere; }
+  .activity-note { margin: 8px 0 0; color: var(--ink-2); }
+  .activity-done { display: inline-flex; gap: 8px; align-items: center; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .activity-done input { width: 20px; height: 20px; margin: 0; }
+  .activity.is-done .activity-thumb img { filter: grayscale(1); opacity: .55; }
+
+  /* Full-screen player for the activity files. */
+  .player { position: fixed; inset: 0; z-index: 100; background: #000; }
+  .player[hidden] { display: none; }
+  .player iframe { width: 100%; height: 100%; border: 0; background: #000; }
+  .player-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; background: rgba(255, 255, 255, .14); color: #fff; font-size: 16px; }
+  .player-close:hover { background: rgba(255, 255, 255, .28); }
+
+  @media (max-width: 680px) { .activity-row { grid-column: 1; grid-template-columns: minmax(0, 1fr); } }
+
+  @media print {
+    body { background: #fff; font-size: 11.5pt; }
+    .page { padding: 0; max-width: none; }
+    .print-btn, .course-nav, .player { display: none; }
+    .step { margin-top: 18px; }
+    figure img { max-height: 3.1in; width: auto; max-width: 100%; }
+    @page { margin: 0.55in; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <nav id="course-nav" class="course-nav" aria-label="Course"></nav>
+  <p class="eyebrow">Handout · Lesson 2</p>
+  <h1>Validate your <span class="accent">access</span></h1>
+  <p class="intro">Before the hands-on lessons, check that you can sign in to each site below and see the groups you'll be working in. Click each link, sign in, and tick the box when your screen looks like the example.</p>
+
+  <section class="step marked activity" data-file="lesson-02-item-01-training-objectives.html">
+    <div class="step-head">
+      <div class="num">1</div>
+      <div class="activity-row">
+        <a class="activity-thumb" href="lessons/lesson-02-item-01-training-objectives.html" data-open><img src="thumbs/lesson-02-item-01-training-objectives-html-thumb.png" alt=""></a>
+        <div class="activity-body">
+          <div class="activity-title"><a href="lessons/lesson-02-item-01-training-objectives.html" data-open>Training Objectives</a> <span class="activity-kind">Web page</span></div>
+          <div class="activity-file">lesson-02-item-01-training-objectives.html</div>
+          <p class="activity-note">What this lesson covers and what it doesn't.</p>
+        </div>
+        <label class="activity-done"><input type="checkbox"> Done</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="step marked">
+    <div class="step-head">
+      <div class="num">2</div>
+      <div class="step-body">
+        <h2>Validate your Databricks DevOps access</h2>
+        <a class="link" href="https://advana-data.cloud.databricks.mil/browse/folders/workspace" target="_blank" rel="noopener">
+          Open Databricks <span class="url">https://advana-data.cloud.databricks.mil/browse/folders/workspace</span>
+        </a>
+        <p>You should be able to sign in and see a screen similar to the one below.</p>
+        <label class="check"><input type="checkbox"> I can sign in and see my Workspace.</label>
+        <figure>
+          <img src="lessons/lesson-02-item-02-databricks-workspace.png" alt="Databricks Workspace page showing Home, Shared with me and Workspace in the left panel, and the user's folder under Workspace › Users">
+          <figcaption>Example: Databricks Workspace, with your own folder under Workspace › Users.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <script type="application/json" class="kc">
+    [{"q": "What should you see after you sign in to Databricks?", "options": ["Your GitLab groups", "Your Workspace, with your own folder under Workspace › Users", "A list of personal access tokens"], "answer": 1, "why": "If you can sign in and see your Workspace, your Databricks access works."}]
+    </script>
+  </section>
+
+  <section class="step marked">
+    <div class="step-head">
+      <div class="num">3</div>
+      <div class="step-body">
+        <h2>Validate your Advana GitLab account</h2>
+        <a class="link" href="https://gitlab.iss.advana.data.mil/" target="_blank" rel="noopener">
+          Open Advana GitLab <span class="url">https://gitlab.iss.advana.data.mil/</span>
+        </a>
+        <p>You should be able to sign in and see a screen similar to the one below.</p>
+        <label class="check"><input type="checkbox"> I can sign in and see my Groups.</label>
+        <figure>
+          <img src="lessons/lesson-02-item-02-gitlab-groups.png" alt="GitLab Groups page under Your work, listing Community Spaces">
+          <figcaption>Example: GitLab › Your work › Groups, with Community Spaces listed.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <script type="application/json" class="kc">
+    [{"q": "You can sign in to GitLab, but the Groups page is empty. What does that tell you?", "options": ["Everything is fine", "Your account works, but you haven't been added to any groups yet", "Your Databricks access is broken"], "answer": 1, "why": "Signing in proves the account exists; group membership is separate. Tell the instructor or any owner, and they'll add you."}]
+    </script>
+  </section>
+
+  <section class="step marked">
+    <div class="step-head">
+      <div class="num">4</div>
+      <div class="step-body">
+        <h2>Validate that you have access to the Pegasus and TCJ4LM groups</h2>
+        <a class="link" href="https://gitlab.advana.data.mil/community-spaces/pegasus" target="_blank" rel="noopener">
+          Open the Pegasus group <span class="url">https://gitlab.advana.data.mil/community-spaces/pegasus</span>
+        </a>
+        <a class="link" href="https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm" target="_blank" rel="noopener">
+          Open the TCJ4LM group <span class="url">https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm</span>
+        </a>
+        <label class="check"><input type="checkbox"> I can open the Pegasus group.</label>
+        <label class="check"><input type="checkbox"> I can see TCJ4LM inside Pegasus.</label>
+        <figure>
+          <img src="lessons/lesson-02-item-02-pegasus-group.png" alt="Pegasus group page in GitLab listing the Data Products and TCJ4LM subgroups">
+          <figcaption>Example: the Pegasus group, with TCJ4LM listed under Subgroups and projects.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <script type="application/json" class="kc">
+    [{"q": "Where is the TCJ4LM group?", "options": ["Directly at the top of GitLab", "Inside Pegasus, under Community Spaces", "Inside your personal group"], "answer": 1, "why": "The path is Community Spaces › Pegasus › TCJ4LM."}, {"q": "You can open Pegasus but don't see TCJ4LM in it. What should you do?", "options": ["Create a TCJ4LM group yourself", "Ask the instructor or any owner to add you", "Nothing; it isn't needed"], "answer": 1, "why": "You need TCJ4LM for the rest of the course. The instructor or any owner can add you."}]
+    </script>
+  </section>
+
+  <section class="step marked">
+    <div class="step-head">
+      <div class="num">5</div>
+      <div class="step-body">
+        <h2>TCJ4LM areas you need for this class</h2>
+        <p>This isn't every location in TCJ4LM, only the ones you need access to for this class. Click each link to check you can open it.</p>
+        <div class="tree">GitLab
+└─ Community Spaces
+   └─ Pegasus
+      └─ TCJ4LM
+         ├─ COMMON
+         ├─ LABS
+         ├─ LIBRARY
+         ├─ PLAYGROUND
+         └─ … other areas (not needed for this class)</div>
+
+        <div class="groups">
+          <div class="group marked">
+            <div class="row"><h3><a href="https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm/COMMON" target="_blank" rel="noopener">COMMON</a></h3>
+              <span class="url">…/pegasus/tcj4lm/COMMON</span></div>
+            <p>Shared resources used across all products: docs, the shared Python library, shared business rules, CI templates, training material, and project templates.</p>
+          </div>
+          <div class="group marked">
+            <div class="row"><h3><a href="https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm/LABS" target="_blank" rel="noopener">LABS</a></h3>
+              <span class="url">…/pegasus/tcj4lm/LABS</span></div>
+            <p>Team-level, pre-product work with 2+ contributors and no formal owner or delivery target yet. Known products go directly to PRODUCTS instead.</p>
+          </div>
+          <div class="group marked">
+            <div class="row"><h3><a href="https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm/LIBRARY" target="_blank" rel="noopener">LIBRARY</a></h3>
+              <span class="url">…/pegasus/tcj4lm/LIBRARY</span></div>
+            <p><span class="ph">one-line description of what LIBRARY holds</span></p>
+          </div>
+          <div class="group marked">
+            <div class="row"><h3><a href="https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm/PLAYGROUND" target="_blank" rel="noopener">PLAYGROUND</a></h3>
+              <span class="url">…/pegasus/tcj4lm/PLAYGROUND</span></div>
+            <p>Individual, unsupported experimentation. Each person has their own subgroup here, holding their own project(s). Not for anything other people depend on. If a second person starts using something here, move it to LABS.</p>
+          </div>
+        </div>
+        <div class="note">Not sure where something goes? See <code>where-does-this-go.md</code> in the COMMON guidance for the full decision path and how to start an initiative.</div>
+      </div>
+    </div>
+    <script type="application/json" class="kc">
+    [{"q": "Where does individual, unsupported experimentation go?", "options": ["COMMON", "LABS", "PLAYGROUND, in your own subgroup"], "answer": 2, "why": "PLAYGROUND holds one subgroup per person for their own experiments."}, {"q": "A second person starts depending on something in your PLAYGROUND group. What now?", "options": ["Leave it there", "Move it to LABS", "Move it to COMMON"], "answer": 1, "why": "LABS is for team-level work with two or more contributors."}]
+    </script>
+  </section>
+
+  <section class="step marked">
+    <div class="step-head">
+      <div class="num">↗</div>
+      <div class="step-body">
+        <h2>Quick links</h2>
+        <a class="link" href="https://gitlab.advana.data.mil/" target="_blank" rel="noopener">GitLab <span class="url">https://gitlab.advana.data.mil/</span></a>
+        <a class="link" href="https://gitlab.advana.data.mil/community-spaces/pegasus" target="_blank" rel="noopener">Pegasus group <span class="url">https://gitlab.advana.data.mil/community-spaces/pegasus</span></a>
+        <a class="link" href="https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm" target="_blank" rel="noopener">TCJ4-LM group <span class="url">https://gitlab.advana.data.mil/community-spaces/pegasus/tcj4lm</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="step marked activity" data-file="lesson-02-item-03-validate-access-knowledge-check.html">
+    <div class="step-head">
+      <div class="num">6</div>
+      <div class="activity-row">
+        <a class="activity-thumb" href="lessons/lesson-02-item-03-validate-access-knowledge-check.html" data-open><img src="thumbs/lesson-02-item-03-validate-access-knowledge-check-html-thumb.png" alt=""></a>
+        <div class="activity-body">
+          <div class="activity-title"><a href="lessons/lesson-02-item-03-validate-access-knowledge-check.html" data-open>Validate Access Knowledge Check</a> <span class="activity-kind">Web page</span></div>
+          <div class="activity-file">lesson-02-item-03-validate-access-knowledge-check.html</div>
+        </div>
+        <label class="activity-done"><input type="checkbox"> Done</label>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="player" id="player" role="dialog" aria-label="Lesson material" hidden>
+  <iframe id="player-frame" title="Lesson material"></iframe>
+  <button class="player-close" id="player-close" type="button" title="Close (Esc)" aria-label="Close">✕</button>
+</div>
+<button class="print-btn" type="button" onclick="window.print()">Print / Save as PDF</button>
+<script src="../course.js"></script>
+<script>
+(() => {
+  // Course bar: same as the lesson plans. ../course.js lists the lessons; this
+  // page finds itself by its folder name. Hidden if course.js isn't found.
+  const course = window.COURSE, nav = document.getElementById("course-nav");
+  if (course && Array.isArray(course.lessons)) {
+    const parts = decodeURIComponent(location.pathname).split("/");
+    const at = course.lessons.findIndex((l) => l.folder === parts[parts.length - 2]);
+    if (at >= 0) {
+      const file = course.lessonFile || "lesson_plan.html";
+      const href = (l) => "../" + encodeURIComponent(l.folder) + "/" + encodeURIComponent(l.file || file);
+      const make = (tag, cls, text, link) => {
+        const e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text;
+        if (link) e.href = link; return e;
+      };
+      const left = document.createElement("div");
+      left.append(make("a", "", "← All lessons", "../index.html"),
+        make("span", "where", ` · ${course.where(at)}`));
+      const steps = make("div", "steps", "");
+      const prev = course.lessons[at - 1], next = course.lessons[at + 1];
+      steps.append(prev ? make("a", "prev", "← " + prev.title, href(prev)) : make("span", "", "First lesson"));
+      steps.append(next ? make("a", "next", next.title + " →", href(next)) : make("span", "", "Last lesson"));
+      nav.append(left, steps);
+    }
+  }
+
+  // Screenshots: click to show full screen; click again or Esc to return.
+  const isFs = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+  document.querySelectorAll("figure img").forEach((img) => {
+    img.title = "Click to view full screen (Esc to return)";
+    img.addEventListener("click", () => {
+      if (isFs()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+      const req = img.requestFullscreen || img.webkitRequestFullscreen;
+      if (req) { const r = req.call(img); if (r && r.catch) r.catch(() => {}); }
+    });
+  });
+})();
+</script>
+<script>
+// Activity rows: Done ticks, and opening their files full screen as lesson 1's plan does.
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const DONE_KEY = "lesson-plan-done:" + location.pathname; // per page, so lessons don't collide
+  let done = [];
+  try { done = JSON.parse(localStorage.getItem(DONE_KEY)) || []; } catch {}
+  const saveDone = () => { try { localStorage.setItem(DONE_KEY, JSON.stringify(done)); } catch {} };
+  const player = $("player"), frame = $("player-frame");
+  const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement;
+  // Used on Windows and Mac, so name the shortcut for the machine it is open on.
+  const NEW_TAB_CLICK = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent) ? "⌘-click" : "Ctrl-click";
+
+  function openPlayer(e, href) {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    player.hidden = false;
+    // Must run during the click, or the browser refuses full screen.
+    const req = player.requestFullscreen || player.webkitRequestFullscreen;
+    if (req) { const r = req.call(player); if (r && r.catch) r.catch(() => {}); }
+    frame.addEventListener("load", () => { try { frame.contentWindow.focus(); } catch {} }, { once: true });
+    frame.src = href;
+    frame.focus();
+  }
+  function closePlayer() {
+    if (player.hidden) return;
+    frame.removeAttribute("src");
+    player.hidden = true;
+    if (fsElement()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  }
+  document.querySelectorAll(".activity").forEach((row) => {
+    const file = row.dataset.file, box = row.querySelector(".activity-done input");
+    box.checked = done.includes(file);
+    row.classList.toggle("is-done", box.checked);
+    box.addEventListener("change", () => {
+      done = done.filter((f) => f !== file);
+      if (box.checked) done.push(file);
+      saveDone();
+      row.classList.toggle("is-done", box.checked);
+    });
+    row.querySelectorAll("[data-open]").forEach((a) => {
+      a.title = `Present full screen (${NEW_TAB_CLICK} to open in a new tab)`;
+      a.addEventListener("click", (e) => openPlayer(e, a.getAttribute("href")));
+    });
+  });
+  $("player-close").addEventListener("click", closePlayer);
+  // The slide and knowledge check post this when Esc is pressed inside them.
+  window.addEventListener("message", (e) => { if (e.data === "lesson-plan:close") closePlayer(); });
+  for (const ev of ["fullscreenchange", "webkitfullscreenchange"]) {
+    document.addEventListener(ev, () => { if (!fsElement()) closePlayer(); });
+  }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePlayer(); });
+})();
+</script>
+</body>
+</html>

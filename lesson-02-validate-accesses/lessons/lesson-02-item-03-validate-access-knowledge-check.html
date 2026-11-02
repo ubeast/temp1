@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validate Access Knowledge Check</title>
+<!--
+  End-of-lesson knowledge check for lesson 2 (Validate accesses), run by the
+  instructor (e.g. on a projector). Same page as lesson 3's
+  lesson-03-item-09-gitlab-knowledge-check.html; only the questions and titles differ.
+  The questions cover access only. What each group is for is taught and checked
+  in lesson 3.
+
+  For whoever maintains this next:
+  - Quiz content lives in the JSON block in the script tag with id
+    "quiz-data". Each question has: q (text), options (2-6 strings),
+    answer (0-based index of the correct option), why (shown after checking).
+    Edit that block to change or add questions; nothing else needs to change.
+  - Quiz progress is deliberately NOT saved: a reload starts a fresh run.
+  - Student questions are saved in this browser's localStorage (per computer),
+    and can be downloaded as a text file or copied to the clipboard.
+  - Always dark: data-theme="dark" on <html> uses the dark colours whatever the
+    computer's setting. Change it to "light" for always light, or remove it to
+    follow the computer.
+  - Keyboard: A-F or 1-6 pick an answer, Enter checks / goes to the next
+    question, Left/Right arrows move between questions.
+-->
+<style>
+  :root {
+    --bg: #f5f6f8; --surface: #ffffff; --ink: #111827; --ink-2: #4b5563; --ink-3: #8a919e;
+    --line: #e6e8ec; --line-strong: #d4d8de; --accent: #2f5bea; --accent-ink: #ffffff;
+    --accent-soft: #eef2fe; --good: #15803d; --good-soft: #ecfdf3; --bad: #b91c1c; --bad-soft: #fef2f2;
+    --shadow: 0 1px 2px rgba(17, 24, 39, .04), 0 4px 16px rgba(17, 24, 39, .04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1013; --surface: #171a1f; --ink: #eef0f3; --ink-2: #b4bac4; --ink-3: #7c8490;
+      --line: #262a31; --line-strong: #343944; --accent: #6d8dff; --accent-ink: #0e1013;
+      --accent-soft: #1d2540; --good: #4ade80; --good-soft: #10291b; --bad: #f87171; --bad-soft: #2f1416;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1013; --surface: #171a1f; --ink: #eef0f3; --ink-2: #b4bac4; --ink-3: #7c8490;
+    --line: #262a31; --line-strong: #343944; --accent: #6d8dff; --accent-ink: #0e1013;
+    --accent-soft: #1d2540; --good: #4ade80; --good-soft: #10291b; --bad: #f87171; --bad-soft: #2f1416;
+    --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 24px 80px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+  h1 { margin: 0 0 6px; font-size: 32px; line-height: 1.2; letter-spacing: -.02em; }
+  .lede { margin: 0 0 28px; color: var(--ink-2); }
+  h2 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+
+  .btn {
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    height: 38px; padding: 0 16px; border-radius: 8px;
+    border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+  }
+  .btn:hover:not(:disabled) { border-color: var(--ink-3); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--ink-2); }
+  .btn.ghost:hover:not(:disabled) { color: var(--ink); background: var(--surface); }
+  .btn.small { height: 32px; padding: 0 12px; font-size: 13px; }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+
+  /* ---------- Quiz ---------- */
+  .quiz { padding: 28px 32px 26px; margin-bottom: 40px; }
+  .quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .counter { font-size: 13px; font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .dots { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dot {
+    width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line-strong);
+    background: transparent; color: var(--ink-3); font: 600 11px/1 inherit; cursor: pointer;
+    display: grid; place-items: center; font-variant-numeric: tabular-nums;
+  }
+  .dot.current { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .dot.good { background: var(--good); border-color: var(--good); color: #fff; }
+  .dot.bad { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+  .question { font-size: 26px; line-height: 1.3; font-weight: 700; letter-spacing: -.015em; margin: 0 0 22px; }
+  .options { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .option {
+    display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer;
+    padding: 14px 16px; border-radius: 10px; border: 1.5px solid var(--line-strong);
+    background: var(--surface); color: var(--ink); font: inherit; font-size: 18px; line-height: 1.4;
+    transition: border-color .12s, background .12s;
+  }
+  .option:hover:not(:disabled) { border-color: var(--accent); }
+  .option:disabled { cursor: default; }
+  .letter {
+    flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+    background: var(--bg); color: var(--ink-2); font-size: 14px; font-weight: 700;
+  }
+  .option.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .option.selected .letter { background: var(--accent); color: var(--accent-ink); }
+  .option.correct { border-color: var(--good); background: var(--good-soft); }
+  .option.correct .letter { background: var(--good); color: #fff; }
+  .option.wrong { border-color: var(--bad); background: var(--bad-soft); }
+  .option.wrong .letter { background: var(--bad); color: #fff; }
+  .option .mark { margin-left: auto; font-size: 14px; font-weight: 700; }
+  .option.correct .mark { color: var(--good); }
+  .option.wrong .mark { color: var(--bad); }
+  code { font: .9em ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--bg); padding: 1px 6px; border-radius: 5px; }
+
+  .feedback { margin-top: 18px; padding: 14px 16px; border-radius: 10px; border-left: 4px solid; font-size: 16px; }
+  .feedback[hidden] { display: none; }
+  .feedback.good { border-color: var(--good); background: var(--good-soft); }
+  .feedback.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .feedback strong { display: block; margin-bottom: 2px; }
+  .feedback.good strong { color: var(--good); }
+  .feedback.bad strong { color: var(--bad); }
+
+  .quiz-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .quiz-actions .right { display: flex; gap: 8px; }
+  .hint { font-size: 12px; color: var(--ink-3); }
+
+  .results { text-align: center; padding: 12px 0 4px; }
+  .results[hidden] { display: none; }
+  .score { font-size: 56px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin: 8px 0 6px; font-variant-numeric: tabular-nums; }
+  .score-sub { color: var(--ink-2); margin: 0 0 20px; }
+  .results .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+  /* ---------- Student questions ---------- */
+  .sq-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .sq-head p { margin: 4px 0 0; color: var(--ink-2); font-size: 14px; }
+  .sq-tools { display: flex; gap: 6px; }
+  .sq-form { padding: 16px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 180px 1fr auto; gap: 10px; align-items: start; }
+  .sq-form input, .sq-form textarea {
+    font: inherit; font-size: 15px; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line-strong); border-radius: 8px; padding: 8px 12px; min-width: 0;
+  }
+  .sq-form textarea { resize: vertical; min-height: 40px; height: 40px; line-height: 1.45; }
+  .sq-form input:focus, .sq-form textarea:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+  .sq-list { list-style: none; margin: 0; padding: 0; }
+  .sq-item { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; padding: 14px 16px; border-top: 1px solid var(--line); }
+  .sq-item:first-child { border-top: 0; }
+  .sq-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .sq-meta { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .sq-item.answered .sq-text { color: var(--ink-3); text-decoration: line-through; }
+  .sq-empty { padding: 22px 16px; color: var(--ink-3); text-align: center; font-size: 14px; }
+  .check { display: inline-flex; cursor: pointer; padding-top: 2px; }
+  .check input { position: absolute; opacity: 0; pointer-events: none; }
+  .check .box { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line-strong); display: grid; place-items: center; }
+  .check input:checked + .box { background: var(--good); border-color: var(--good); }
+  .check input:checked + .box svg { opacity: 1; }
+  .check .box svg { opacity: 0; }
+  .check input:focus-visible + .box { box-shadow: 0 0 0 3px var(--accent-soft); }
+  .icon-btn { width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: var(--ink-3); cursor: pointer; display: grid; place-items: center; }
+  .icon-btn:hover { background: var(--line); color: var(--bad); }
+  .icon-btn.armed { color: var(--bad); background: var(--bad-soft); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none;
+    background: var(--ink); color: var(--bg); font-size: 13px; padding: 9px 14px; border-radius: 8px;
+    transition: opacity .2s, transform .2s; max-width: calc(100vw - 32px);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 640px) {
+    main { padding: 32px 16px 64px; }
+    h1 { font-size: 26px; }
+    .quiz { padding: 20px 16px; }
+    .question { font-size: 21px; }
+    .option { font-size: 16px; padding: 12px; }
+    .sq-form { grid-template-columns: 1fr; }
+    .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Knowledge check</p>
+  <h1>Validate Access — Check Your Understanding</h1>
+  <p class="lede">Pick an answer, then click <strong>Check answer</strong> to see if it's right.</p>
+
+  <section class="card quiz" aria-labelledby="q-text">
+    <div class="quiz-top">
+      <span class="counter" id="counter"></span>
+      <div class="dots" id="dots" aria-label="Questions"></div>
+    </div>
+
+    <div id="question-view">
+      <p class="question" id="q-text"></p>
+      <ul class="options" id="options"></ul>
+      <div class="feedback" id="feedback" hidden role="status" aria-live="polite"></div>
+      <div class="quiz-actions">
+        <button class="btn ghost" id="prev" type="button">← Previous</button>
+        <span class="hint">Keys: A–C to pick · Enter to check · ← → to move</span>
+        <div class="right">
+          <button class="btn primary" id="check" type="button">Check answer</button>
+          <button class="btn primary" id="next" type="button" hidden>Next question →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results" id="results" hidden>
+      <p class="eyebrow">All done</p>
+      <div class="score" id="score"></div>
+      <p class="score-sub" id="score-sub"></p>
+      <div class="row">
+        <button class="btn" id="review" type="button">Review the ones missed</button>
+        <button class="btn primary" id="restart" type="button">Start over</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sq-head">
+      <div>
+        <h2>Student questions</h2>
+        <p>Write down questions as they come up. They're saved on this computer.</p>
+      </div>
+      <div class="sq-tools">
+        <button class="btn small" id="sq-copy" type="button">Copy all</button>
+        <button class="btn small" id="sq-download" type="button">Download</button>
+      </div>
+    </div>
+    <div class="card">
+      <form class="sq-form" id="sq-form">
+        <input id="sq-name" placeholder="Name (optional)" autocomplete="off" aria-label="Student name">
+        <textarea id="sq-text" placeholder="Type a question, e.g. Where do I find my personal group?" aria-label="Question"></textarea>
+        <button class="btn primary" type="submit">Add</button>
+      </form>
+      <ul class="sq-list" id="sq-list"></ul>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script id="quiz-data" type="application/json">
+[
+  {
+    "q": "What should you see after you sign in to Databricks?",
+    "options": [
+      "Your GitLab groups",
+      "Your Workspace, with your own folder under Workspace › Users",
+      "A list of personal access tokens"
+    ],
+    "answer": 1,
+    "why": "If you can sign in and see your Workspace, your Databricks access works."
+  },
+  {
+    "q": "You can sign in to GitLab, but the Groups page is empty. What does that tell you?",
+    "options": [
+      "Everything is fine",
+      "Your account works, but you haven't been added to any groups yet",
+      "Your Databricks access is broken"
+    ],
+    "answer": 1,
+    "why": "Signing in proves the account exists; group membership is separate. Tell the instructor or any owner, and they'll add you."
+  },
+  {
+    "q": "Where is the TCJ4LM group?",
+    "options": [
+      "Directly at the top of GitLab",
+      "Inside Pegasus, under Community Spaces",
+      "Inside your personal group"
+    ],
+    "answer": 1,
+    "why": "The path is Community Spaces › Pegasus › TCJ4LM."
+  },
+  {
+    "q": "You can open Pegasus but don't see TCJ4LM in it. What should you do?",
+    "options": [
+      "Create a TCJ4LM group yourself",
+      "Ask the instructor or any owner to add you",
+      "Nothing; it isn't needed"
+    ],
+    "answer": 1,
+    "why": "You need TCJ4LM for the rest of the course. The instructor or any owner can add you."
+  }
+]
+</script>
+
+<script>
+(() => {
+  const QUIZ = JSON.parse(document.getElementById("quiz-data").textContent);
+  const LETTERS = "ABCDEF";
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, html) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  };
+
+  let toastTimer;
+  function toast(msg) {
+    const t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  // ---------- Quiz ----------
+  // Per question: choice = selected option index (or null); checked = revealed.
+  // Quiz content is trusted (written in this file), so it may contain <code>.
+  let state, current, showingResults;
+  function resetQuiz() {
+    state = QUIZ.map(() => ({ choice: null, checked: false }));
+    current = 0; showingResults = false;
+  }
+
+  function renderQuiz() {
+    const q = QUIZ[current], s = state[current];
+    $("question-view").hidden = showingResults;
+    $("results").hidden = !showingResults;
+    $("counter").textContent = showingResults ? "Results" : `Question ${current + 1} of ${QUIZ.length}`;
+
+    // Progress dots: green/red once checked; click to jump.
+    const dots = $("dots"); dots.innerHTML = "";
+    QUIZ.forEach((qq, i) => {
+      const st = state[i];
+      const d = el("button", "dot");
+      d.type = "button"; d.textContent = i + 1; d.setAttribute("aria-label", "Question " + (i + 1));
+      if (st.checked) d.classList.add(st.choice === qq.answer ? "good" : "bad");
+      if (!showingResults && i === current) d.classList.add("current");
+      d.addEventListener("click", () => go(i));
+      dots.append(d);
+    });
+
+    if (showingResults) { renderResults(); return; }
+
+    $("q-text").innerHTML = q.q;
+    const list = $("options"); list.innerHTML = "";
+    q.options.forEach((opt, i) => {
+      const li = el("li");
+      const b = el("button", "option");
+      b.type = "button"; b.disabled = s.checked;
+      b.append(el("span", "letter", LETTERS[i]), el("span", "", opt));
+      if (s.checked) {
+        if (i === q.answer) { b.classList.add("correct"); b.append(el("span", "mark", "✓ Correct answer")); }
+        else if (i === s.choice) { b.classList.add("wrong"); b.append(el("span", "mark", "✗ Your answer")); }
+      } else if (i === s.choice) {
+        b.classList.add("selected");
+      }
+      b.addEventListener("click", () => select(i));
+      li.append(b); list.append(li);
+    });
+
+    const fb = $("feedback");
+    fb.hidden = !s.checked;
+    if (s.checked) {
+      const right = s.choice === q.answer;
+      fb.className = "feedback " + (right ? "good" : "bad");
+      fb.innerHTML = `<strong>${right ? "Correct!" : "Not quite."}</strong>${q.why}`;
+    }
+
+    $("prev").disabled = current === 0;
+    $("check").hidden = s.checked;
+    $("check").disabled = s.choice === null;
+    $("next").hidden = !s.checked;
+    $("next").textContent = current === QUIZ.length - 1 ? "See results →" : "Next question →";
+  }
+
+  function renderResults() {
+    const right = state.filter((s, i) => s.checked && s.choice === QUIZ[i].answer).length;
+    const answered = state.filter((s) => s.checked).length;
+    $("score").textContent = `${right} / ${QUIZ.length}`;
+    const pct = Math.round((100 * right) / QUIZ.length);
+    const unanswered = QUIZ.length - answered;
+    $("score-sub").textContent = `${pct}% correct` + (unanswered ? ` · ${unanswered} not answered` : "");
+    $("review").hidden = right === QUIZ.length;
+  }
+
+  function select(i) {
+    if (state[current].checked) return;
+    state[current].choice = i; renderQuiz();
+  }
+  function check() {
+    const s = state[current];
+    if (s.choice === null || s.checked) return;
+    s.checked = true; renderQuiz();
+  }
+  function go(i) {
+    showingResults = false;
+    current = Math.max(0, Math.min(QUIZ.length - 1, i));
+    renderQuiz();
+  }
+  function next() {
+    if (current === QUIZ.length - 1) { showingResults = true; renderQuiz(); }
+    else go(current + 1);
+  }
+
+  $("check").addEventListener("click", check);
+  $("next").addEventListener("click", next);
+  $("prev").addEventListener("click", () => go(current - 1));
+  $("restart").addEventListener("click", () => { resetQuiz(); renderQuiz(); });
+  $("review").addEventListener("click", () => {
+    // Clear only the missed or skipped questions and start at the first one.
+    const missed = QUIZ.map((q, i) => i).filter((i) => !(state[i].checked && state[i].choice === QUIZ[i].answer));
+    missed.forEach((i) => (state[i] = { choice: null, checked: false }));
+    go(missed[0] ?? 0);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    const tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea" || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (showingResults) return;
+    const k = e.key.toUpperCase();
+    const n = LETTERS.indexOf(k) !== -1 ? LETTERS.indexOf(k) : "123456".indexOf(e.key);
+    if (n !== -1 && n < QUIZ[current].options.length) { select(n); e.preventDefault(); }
+    else if (e.key === "Enter" && tag !== "button") { state[current].checked ? next() : check(); e.preventDefault(); }
+    else if (e.key === "ArrowRight") go(current + 1);
+    else if (e.key === "ArrowLeft") go(current - 1);
+  });
+
+  resetQuiz(); renderQuiz();
+
+  // ---------- Student questions ----------
+  // Saved per browser. Wrapped in try/catch: storage can be unavailable
+  // (private windows, blocked site data); the list still works for the session.
+  const SQ_KEY = "lesson-student-questions:" + location.pathname;
+  let questions = [];
+  try { questions = JSON.parse(localStorage.getItem(SQ_KEY)) || []; } catch {}
+  const saveQuestions = () => { try { localStorage.setItem(SQ_KEY, JSON.stringify(questions)); } catch {} };
+  const fmtTime = (iso) => new Date(iso).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  const CHECK_SVG = '<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.2 5 8.5l4.5-5"/></svg>';
+  const X_SVG = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+
+  function renderQuestions() {
+    const list = $("sq-list"); list.innerHTML = "";
+    if (!questions.length) {
+      list.append(el("li", "sq-empty", "No questions yet."));
+      return;
+    }
+    questions.forEach((item, i) => {
+      const li = el("li", "sq-item" + (item.answered ? " answered" : ""));
+      const label = el("label", "check"); label.title = "Mark as answered";
+      const cb = el("input"); cb.type = "checkbox"; cb.checked = !!item.answered;
+      cb.setAttribute("aria-label", "Answered");
+      cb.addEventListener("change", () => { item.answered = cb.checked; saveQuestions(); renderQuestions(); });
+      label.append(cb, el("span", "box", CHECK_SVG));
+      const body = el("div");
+      const text = el("div", "sq-text"); text.textContent = item.text;
+      const meta = el("div", "sq-meta");
+      meta.textContent = (item.name ? item.name + " · " : "") + fmtTime(item.at) + (item.answered ? " · answered" : "");
+      body.append(text, meta);
+      const del = el("button", "icon-btn", X_SVG); del.type = "button";
+      del.title = "Delete question"; del.setAttribute("aria-label", "Delete question");
+      del.addEventListener("click", () => {
+        // Two-click confirm instead of a modal dialog.
+        if (!del.classList.contains("armed")) {
+          del.classList.add("armed"); toast("Click × again to delete this question");
+          setTimeout(() => del.classList.remove("armed"), 3000);
+          return;
+        }
+        questions.splice(i, 1); saveQuestions(); renderQuestions();
+      });
+      li.append(label, body, del);
+      list.append(li);
+    });
+  }
+
+  $("sq-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = $("sq-text").value.trim();
+    if (!text) { $("sq-text").focus(); return; }
+    questions.push({ text, name: $("sq-name").value.trim(), at: new Date().toISOString(), answered: false });
+    saveQuestions(); renderQuestions();
+    $("sq-text").value = ""; $("sq-text").focus();
+  });
+  // Enter adds the question; Shift+Enter makes a new line.
+  $("sq-text").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("sq-form").requestSubmit(); }
+  });
+
+  function questionsAsText() {
+    return questions.map((q, i) =>
+      `${i + 1}. ${q.text}\n   ${q.name ? q.name + " · " : ""}${fmtTime(q.at)}${q.answered ? " · answered" : ""}`
+    ).join("\n\n");
+  }
+  $("sq-copy").addEventListener("click", async () => {
+    if (!questions.length) { toast("No questions to copy"); return; }
+    try { await navigator.clipboard.writeText(questionsAsText()); toast("Copied " + questions.length + " questions"); }
+    catch { toast("Copy isn't allowed here — use Download instead"); }
+  });
+  $("sq-download").addEventListener("click", () => {
+    if (!questions.length) { toast("No questions to download"); return; }
+    const date = new Date().toISOString().slice(0, 10);
+    const body = `Validate access lesson — student questions (${date})\n\n` + questionsAsText() + "\n";
+    const url = URL.createObjectURL(new Blob([body], { type: "text/plain" }));
+    const a = Object.assign(document.createElement("a"), { href: url, download: `student_questions_${date}.txt` });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  renderQuestions();
+})();
+</script>
+</body>
+</html>
